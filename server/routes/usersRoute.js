@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -79,4 +80,27 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+//get user info 
+router.post("/get-user-info",authMiddleware,async(req,res) =>{
+  try{
+         const user = await User.findById(req.body.userId);
+         res.send({
+          message:"User info fetched successfully",
+          success: true,
+          data: user
+         });
+  }
+  catch(error){
+   res.status(500).send({
+    message:error.message,
+    data: error,
+    success: false
+   });
+  }
+});
+
 export default router;
+
+
+
