@@ -1,25 +1,65 @@
 import "./stylesheets/theme.css";
 import "./stylesheets/alignments.css";
-import "./stylesheets/textelements.css"; 
+import "./stylesheets/textelements.css";
 import "./stylesheets/custom-components.css";
 import "./stylesheets/form-elements.css";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import "./stylesheets/layout.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/common/login";
 import Register from "./pages/common/register";
 import ProtectedRoute from "./components/protectedRoutes";
-import Home from "./pages/common/home"
+import Home from "./pages/common/home";
+import Exams from "./pages/admin/exams";
+import AddEditExam from "./pages/admin/exams/AddEditExam";
 
 function App() {
   return (
-   <BrowserRouter>
-    <Routes>
-     <Route path="/login" element={<Login/>}></Route>
-     <Route path="/register" element={<Register/>} ></Route>
-     <Route path="/" element = {<ProtectedRoute>
-      <Home/>
-     </ProtectedRoute>} />
-    </Routes>
-   </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        {/*common routes*/}
+
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/register" element={<Register />}></Route>
+
+        {/*user routes*/}
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        {/*admin routes */}
+
+        <Route
+          path="/admin/exams"
+          element={
+            <ProtectedRoute>
+              <Exams />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/admin/exams/add"
+          element={
+            <ProtectedRoute>
+              <AddEditExam />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/admin/exams/edit/:id"
+          element={
+            <ProtectedRoute>
+              <AddEditExam />
+            </ProtectedRoute>
+          }
+        ></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

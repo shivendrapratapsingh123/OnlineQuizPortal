@@ -17,3 +17,9 @@ input{
   padding: 10px 20px;
 }
 
+.primary-outlined-btn{
+  background-color:white;
+  color: var(--primary) !important;
+  border:2px solid var(--primary);
+  border-radius: 2px;
+}
