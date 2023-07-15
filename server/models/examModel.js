@@ -5,12 +5,12 @@ const examSchema = new mongoose.Schema({
     type:String,
     required: true
   },
-  duration:{
-    type: Number,
-    required:true
-  },
   category:{
     type:String,
+    required:true
+  },
+  duration:{
+    type: Number,
     required:true
   },
   totalMarks:{

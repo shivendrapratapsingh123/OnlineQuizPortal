@@ -71,4 +71,24 @@ router.post("/get-exam-by-id",authMiddleware,async(req,res)=>{
     }
 });
 
+// edit exam by id 
+
+router.post("/edit-exam-by-id",authMiddleware, async(req,res)=>{
+ try{
+     await Exam.findByIdAndUpdate(req.body.examId, req.body);
+     res.send({
+      message: "Exam edited successfully",
+      success: true
+     });
+ }
+ catch(error){
+  res.status(500).send({
+    message: error.message,
+    data: error,
+    success: false
+  });
+ }
+});
+
+
 export default router;

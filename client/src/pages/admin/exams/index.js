@@ -14,12 +14,12 @@ const Exams = () => {
   const columns = [
     { title: "Exam Name", dataIndex: "name" },
     {
-      title: "Duration",
+      title: "Category",
       dataIndex: "category",
     },
     {
-      title: "Category",
-      dataIndex: "category",
+      title: "Duration",
+      dataIndex: "duration",
     },
     {
       title: "Total Marks",
