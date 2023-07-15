@@ -47,39 +47,39 @@ function ProtectedRoute({ children }) {
   ];
 
   const adminMenu = [
-      {
-        title: "Home",
-        paths: ["/"],
-        icon: <i className="ri-home-line"></i>,
-        onClick: () => navigate("/"),
+    {
+      title: "Home",
+      paths: ["/"],
+      icon: <i className="ri-home-line"></i>,
+      onClick: () => navigate("/"),
+    },
+    {
+      title: "Exams",
+      paths: ["/admin/exams", "/admin/exams/add"],
+      icon: <i className="ri-file-list-line" />,
+      onClick: () => navigate("/admin/exams"),
+    },
+    {
+      title: "Reports",
+      paths: ["/reports"],
+      icon: <i className="ri-bar-chart-line"></i>,
+      onClick: () => navigate("/admin/reports"),
+    },
+    {
+      title: "Profile",
+      paths: ["/profile"],
+      icon: <i className="ri-user-line"></i>,
+      onClick: () => navigate("/profile"),
+    },
+    {
+      title: "Logout",
+      paths: ["/logout"],
+      icon: <i className="ri-logout-box-line"></i>,
+      onClick: () => {
+        localStorage.removeItem("token");
+        navigate("login");
       },
-      {
-        title: "Exams",
-        paths: ["/admin/exams","/admin/exams/add"],
-        icon: <i className="ri-file-list-line"/>,
-        onClick:()=> navigate("/admin/exams")
-      },
-      {
-        title: "Reports",
-        paths: ["/reports"],
-        icon: <i className="ri-bar-chart-line"></i>,
-        onClick: () => navigate("/admin/reports"),
-      },
-      {
-        title: "Profile",
-        paths: ["/profile"],
-        icon: <i className="ri-user-line"></i>,
-        onClick: () => navigate("/profile"),
-      },
-      {
-        title: "Logout",
-        paths: ["/logout"],
-        icon: <i className="ri-logout-box-line"></i>,
-        onClick: () => {
-          localStorage.removeItem("token");
-          navigate("login");
-        },
-      },
+    },
   ];
 
   const getUserData = async () => {
@@ -88,7 +88,7 @@ function ProtectedRoute({ children }) {
       const response = await getUserInfo();
       dispatch(HideLoading());
       if (response.success) {
-        //message.success(response.message);
+        message.success(response.message);
         dispatch(SetUser(response.data));
         if (response.data.isAdmin) {
           setMenu(adminMenu);
@@ -110,14 +110,18 @@ function ProtectedRoute({ children }) {
 
   const activeRoute = window.location.pathname;
 
-  const getIsActiveOrNot = (paths) =>{
-     if(paths.includes(activeRoute)){
+  const getIsActiveOrNot = (paths) => {
+    if (paths.includes(activeRoute)) {
       return true;
-     }
-     else
-     {
-      return false;
-     }
+    } else {
+      if (
+        activeRoute.includes("/admin/exams/edit") &&
+        paths.includes("/admin/exams")
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return (
@@ -127,12 +131,17 @@ function ProtectedRoute({ children }) {
           <div className="menu">
             {menu.map((item, index) => {
               return (
-                <div className={`menu-item ${getIsActiveOrNot(item.paths) && "active-menu-item"}`}
-                key={index}
-                onClick={item.onClick}
+                <div
+                  className={`menu-item ${
+                    getIsActiveOrNot(item.paths) && "active-menu-item"
+                  }`}
+                  key={index}
+                  onClick={item.onClick}
                 >
                   {item.icon}
-                  {!collapsed &&  <span className="text-white">{item.title}</span>}
+                  {!collapsed && (
+                    <span className="text-white">{item.title}</span>
+                  )}
                 </div>
               );
             })}
@@ -140,18 +149,23 @@ function ProtectedRoute({ children }) {
         </div>
         <div className="body">
           <div className="header flex justify-between">
-            {!collapsed && <i className="ri-close-line"
-            onClick={()=> setCollapsed(true)}
-            ></i>}
-            {collapsed && <i className="ri-menu-line" 
-            onClick={()=> setCollapsed(false)}
-            ></i>}
+            {!collapsed && (
+              <i
+                className="ri-close-line"
+                onClick={() => setCollapsed(true)}
+              ></i>
+            )}
+            {collapsed && (
+              <i
+                className="ri-menu-line"
+                onClick={() => setCollapsed(false)}
+              ></i>
+            )}
             <h1 className="text-2xl">EduQuiz</h1>
             <div className="flex gap-1 item-center">
-            <i className="ri-user-line"></i>
-            <h1 className="text-md underline">{user?.name}</h1>
+              <i className="ri-user-line"></i>
+              <h1 className="text-md underline">{user?.name}</h1>
             </div>
-            
           </div>
           <div className="content">{children}</div>
         </div>

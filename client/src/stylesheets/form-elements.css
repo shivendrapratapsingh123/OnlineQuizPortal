@@ -10,18 +10,19 @@ input,select{
   margin-bottom: 5px;
 }
 
+button{
+  padding: 10px 20px;
+  border-radius: 4px;
+}
 
 .primary-contained-btn{
   
   background-color: var(--primary);
   color: white;
-  padding: 10px 20px;
-  border-radius: 4px;
 }
 
 .primary-outlined-btn{
   background-color:white;
   color: var(--primary) !important;
   border:2px solid var(--primary);
-  border-radius: 4px;
 }
