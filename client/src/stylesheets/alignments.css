@@ -70,10 +70,10 @@
   align-items: center;
 }
 
-.item-start{
+.items-start{
   align-items: flex-start;
 }
-.item-end{
+.items-end{
   align-items: flex-end;
 }
 

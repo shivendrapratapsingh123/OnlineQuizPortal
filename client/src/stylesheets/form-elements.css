@@ -13,6 +13,7 @@ input,select{
 button{
   padding: 10px 20px;
   border-radius: 4px;
+  height: 40px !important;
 }
 
 .primary-contained-btn{
