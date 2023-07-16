@@ -5,10 +5,12 @@ import {Link} from "react-router-dom";
 import { registerUser } from "../../../apicalls/users";
 import { useDispatch } from "react-redux";
 import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
 
   const dispatch = useDispatch();
+  const navigate  = useNavigate()
 
  const onFinish = async(values) =>
  {
@@ -20,6 +22,7 @@ function Register() {
       dispatch(HideLoading());
       if(response.success){
         message.success(response.message);
+        navigate("/login");
       }
       else{
         message.error(response.message);
