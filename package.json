@@ -4,8 +4,15 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "engines" : {
+    "npm": "9.6.7",
+    "node": "18.13.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm start\" \"npm run client\"",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",

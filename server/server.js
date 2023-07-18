@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import examsRoute from "./routes/examsRoute.js";
 import reportsRoute from "./routes/reportsRoute.js";
+import  Path from "path";
 
 const app = express();
 dotenv.config();
@@ -18,6 +19,12 @@ app.use("/api/exams",examsRoute);
 app.use("/api/reports",reportsRoute);
 
 const port = process.env.PORT || 5000;
+
+app.use(express.static(path.join(__dirname, './client/build')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'));
+});
+
 
 app.listen(port, () =>{
   console.log(`server is running on port ${port}`);
