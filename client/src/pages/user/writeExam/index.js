@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { message } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ShowLoading, HideLoading } from "../../../redux/loaderSlice";
 import { getExamById } from "../../../apicalls/exams";
 import Instructions from "./instructions";
+import { addReport } from "../../../apicalls/reports";
 
 const WriteExam = () => {
   const [examData, setExamData] = useState(null);
@@ -20,10 +21,12 @@ const WriteExam = () => {
 
   const [result, setResult] = useState({});
 
-  const [secondsLeft, setSecondsLeft]  = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
   const [timeUp, setTimeUp] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+
+  const { user } = useSelector((state) => state.users);
 
   const getExamData = async () => {
     try {
@@ -35,7 +38,7 @@ const WriteExam = () => {
       if (response.success) {
         setExamData(response.data);
         setQuestions(response.data.questions);
-        setSecondsLeft(response.data.duration)
+        setSecondsLeft(response.data.duration);
       } else {
         message.error(response.data);
       }
@@ -45,49 +48,64 @@ const WriteExam = () => {
     }
   };
 
-  const calculateResult = () => {
-    let correctAnswers = [];
-    let wrongAnswers = [];
-    questions.forEach((question, index) => {
-      if (question.correctOption === selectedOptions[index]) {
-        correctAnswers.push(question);
-      } else {
-        wrongAnswers.push(question);
+  const calculateResult = async () => {
+    try {
+      let correctAnswers = [];
+      let wrongAnswers = [];
+      questions.forEach((question, index) => {
+        if (question.correctOption === selectedOptions[index]) {
+          correctAnswers.push(question);
+        } else {
+          wrongAnswers.push(question);
+        }
+      });
+      let verdict = "Pass";
+      if (correctAnswers.length < examData.passingMarks) {
+        verdict = "Fail";
       }
-    });
-    let verdict = "Pass";
-    if (correctAnswers.length < examData.passingMarks) {
-      verdict = "Fail";
+      const tempResult = {
+        correctAnswers,
+        wrongAnswers,
+        verdict,
+      };
+      setResult(tempResult);
+      dispatch(ShowLoading());
+      const response = await addReport({
+        exam: params.id,
+        result: tempResult,
+        user: user._id,
+      });
+      dispatch(HideLoading());
+      if (response.success) {
+        setView("result");
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      dispatch(HideLoading());
+      message.error(error.message);
     }
-    setResult({
-      correctAnswers,
-      wrongAnswers,
-      verdict,
-    });
-    setView("result");
   };
 
-   const startTimer = ()=>{
-      let totalSeconds = examData.duration;
-      const intervalId = setInterval(()=>{
-        if(totalSeconds > 0){
-          
-          totalSeconds = totalSeconds-1;
-          setSecondsLeft(totalSeconds);
-        }
-        else{
-          setTimeUp(true);
-        }
-      },1000);
-      setIntervalId(intervalId);
-   };
+  const startTimer = () => {
+    let totalSeconds = examData.duration;
+    const intervalId = setInterval(() => {
+      if (totalSeconds > 0) {
+        totalSeconds = totalSeconds - 1;
+        setSecondsLeft(totalSeconds);
+      } else {
+        setTimeUp(true);
+      }
+    }, 1000);
+    setIntervalId(intervalId);
+  };
 
-   useEffect(()=>{
-    if(timeUp){
+  useEffect(() => {
+    if (timeUp) {
       clearInterval(intervalId);
       calculateResult();
     }
-   },[timeUp])
+  }, [timeUp]);
 
   useEffect(() => {
     if (params.id) {
@@ -102,18 +120,23 @@ const WriteExam = () => {
         <h1 className="text-center">{examData.name}</h1>
         <div className="divider"></div>
         {view === "instructions" && (
-          <Instructions examData={examData} view={view} setView={setView} startTimer = {startTimer}/>
+          <Instructions
+            examData={examData}
+            view={view}
+            setView={setView}
+            startTimer={startTimer}
+          />
         )}
         {view === "questions" && (
           <div className="flex flex-col gap-2">
             <div className="flex justify-between">
-            <h1 className="text-2xl">
-              {selectedQuestionIndex + 1} :{" "}
-              {questions[selectedQuestionIndex].name}
-            </h1>
-            <div className="timer">
+              <h1 className="text-2xl">
+                {selectedQuestionIndex + 1} :{" "}
+                {questions[selectedQuestionIndex].name}
+              </h1>
+              <div className="timer">
                 <span className="text-2xl">{secondsLeft}</span>
-            </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -174,9 +197,8 @@ const WriteExam = () => {
                 <button
                   className="primary-contained-btn"
                   onClick={() => {
-                    setTimeUp(true);
                     clearInterval(intervalId);
-                    calculateResult();
+                    setTimeUp(true);
                   }}
                 >
                   Submit
@@ -187,9 +209,10 @@ const WriteExam = () => {
         )}
 
         {view === "result" && (
-          <div className="flex items-center mt-2 justify-center">
-            <div className="flex flex-col gap-2 result">
+          <div className="flex items-center mt-2 justify-center result">
+            <div className="flex flex-col gap-2">
               <h1 className="text-2xl">RESULT</h1>
+              <div className="divider"></div>
               <div className="marks">
                 <h1 className="text-md">Total Marks : {examData.totalMarks}</h1>
                 <h1 className="text-md">
@@ -202,6 +225,27 @@ const WriteExam = () => {
                   wrong Answers : {result.wrongAnswers.length}{" "}
                 </h1>
                 <h1 className="text-md">VERDICT : {result.verdict} </h1>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    className="primary-outlined-btn"
+                    onClick={() => {
+                      setView("instructions");
+                      setSelectedQuestionIndex(0);
+                      setSelectedOptions({});
+                      setSecondsLeft(examData.duration);
+                    }}
+                  >
+                    Retake Exam
+                  </button>
+                  <button
+                    className="primary-contained-btn"
+                    onClick={() => {
+                      setView("review");
+                    }}
+                  >
+                    Review Answers
+                  </button>
+                </div>
               </div>
             </div>
             <div className="lottie-animation">
@@ -225,6 +269,58 @@ const WriteExam = () => {
                 ></lottie-player>
               )}
             </div>
+          </div>
+        )}
+
+        {view === "review" && (
+          <div className="flex flex-col gap-2">
+            {questions.map((question, index) => {
+              const options = JSON.parse(question.options);
+              const correctOption = question.correctOption;
+              const correctAnswer = options[correctOption];
+
+              const isCorrect = correctOption === selectedOptions[index];
+
+              return (
+                <div
+                  className={`flex flex-col gap-1 p-2 ${
+                    isCorrect ? "bg-success" : "bg-error"
+                  }`}
+                  key={index}
+                >
+                  <h1 className="text-xl">
+                    {index + 1} : {question.name}
+                  </h1>
+                  <h1 className="text-md">
+                    Submitted Answer: {selectedOptions[index]} -{" "}
+                    {options[selectedOptions[index]]}
+                  </h1>
+                  <h1 className="text-md">
+                    Correct Answer : {correctOption} - {correctAnswer}
+                  </h1>
+                </div>
+              );
+            })}
+     
+              <div className="flex justify-center gap-2">
+                <button className="primary-outlined-btn" onClick={()=>{
+                  navigate("/");
+                }}>
+                  Close
+                </button>
+                <button className="primary-contained-btn"
+                onClick={()=>{
+                  setView("instructions");
+                  setSelectedQuestionIndex(0);
+                  setSelectedOptions({});
+                  setSecondsLeft(examData.duration);
+                  
+                }}
+                >
+                  Retake Exam
+                </button>
+              </div>
+
           </div>
         )}
       </div>

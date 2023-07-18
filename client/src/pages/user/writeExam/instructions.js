@@ -1,5 +1,10 @@
 
+import { useNavigate } from "react-router-dom";
+
 const Instructions = ({examData,view,setView,startTimer})=>{
+ 
+  const navigate = useNavigate();
+
   return(
     <div className="flex flex-col items-center gap-5">
    
@@ -21,11 +26,18 @@ const Instructions = ({examData,view,setView,startTimer})=>{
       <span className="font-bold">{examData.passingMarks}</span>
       </li>
     </ul>
+     <div className="flex gap-2 ">
      <button className="primary-outlined-btn"
+     onClick={()=>navigate("/")}
+     >
+      Close
+     </button>
+     <button className="primary-contained-btn"
      onClick={()=>{
        startTimer();
       setView("questions")}}
      >Start Exam</button>
+     </div>
     </div>
   )
 }

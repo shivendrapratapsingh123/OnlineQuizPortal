@@ -36,12 +36,14 @@ function Register() {
 
 
   return(
-    <div className="flex justify-center items-center h-screan w-screan">
-    <div className="card w-400 p-3">
+    <div className="flex justify-center items-center h-screan w-screan bg-white ">
+    <div className="card w-400 p-3 bg-y">
     <div className="flex flex-col">
-      <h1 className="text-2xl">
-        Register
+     <div className="flex flex-col">
+     <h1 className="text-2xl">
+       EduQuiz Register <i class="ri-user-add-line"></i>
       </h1>
+     </div>
       <div className="divider"></div>
       <Form
       layout="vertical"

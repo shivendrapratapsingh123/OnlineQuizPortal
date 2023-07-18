@@ -4,7 +4,7 @@
 
 
 .sidebar{
-  background-color: var(--primary);
+  background-color: #3f1bb6;
   padding: 10px;
   border-radius: 5px;
   color:white;
@@ -34,7 +34,7 @@
 }
 
 .header{
-  background-color: var(--primary);
+  background-color: #3f1bb6;
   color:white;
   width:100%;
   padding: 15px;

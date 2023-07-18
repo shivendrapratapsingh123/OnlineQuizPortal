@@ -19,15 +19,15 @@ function ProtectedRoute({ children }) {
   const userMenu = [
     {
       title: "Home",
-      paths: ["/","/user/write-exam"],
+      paths: ["/", "/user/write-exam"],
       icon: <i className="ri-home-line"></i>,
       onClick: () => navigate("/"),
     },
     {
       title: "Reports",
-      paths: ["/reports"],
+      paths: ["/user/reports"],
       icon: <i className="ri-bar-chart-line"></i>,
-      onClick: () => navigate("/reports"),
+      onClick: () => navigate("/user/reports"),
     },
     {
       title: "Profile",
@@ -49,7 +49,7 @@ function ProtectedRoute({ children }) {
   const adminMenu = [
     {
       title: "Home",
-      paths: ["/","/user/write-exam"],
+      paths: ["/", "/user/write-exam"],
       icon: <i className="ri-home-line"></i>,
       onClick: () => navigate("/"),
     },
@@ -61,7 +61,7 @@ function ProtectedRoute({ children }) {
     },
     {
       title: "Reports",
-      paths: ["/reports"],
+      paths: ["/admin/reports"],
       icon: <i className="ri-bar-chart-line"></i>,
       onClick: () => navigate("/admin/reports"),
     },
@@ -106,10 +106,9 @@ function ProtectedRoute({ children }) {
   };
 
   useEffect(() => {
-    if(localStorage.getItem("token")){
+    if (localStorage.getItem("token")) {
       getUserData();
-    }
-    else{
+    } else {
       navigate("/login");
     }
   }, []);
@@ -126,10 +125,12 @@ function ProtectedRoute({ children }) {
       ) {
         return true;
       }
-      if(activeRoute.includes("/user/write-exam") && paths.includes("/user/write-exam")){
+      if (
+        activeRoute.includes("/user/write-exam") &&
+        paths.includes("/user/write-exam")
+      ) {
         return true;
       }
-
     }
     return false;
   };
@@ -172,9 +173,11 @@ function ProtectedRoute({ children }) {
               ></i>
             )}
             <h1 className="text-2xl">EduQuiz</h1>
-            <div className="flex gap-1 item-center">
-              <i className="ri-user-line"></i>
-              <h1 className="text-md underline">{user?.name}</h1>
+            <div>
+              <div className="flex gap-1 item-center">
+                <h1 className="text-md">{user?.name}</h1>
+              </div>
+              <span>Role : {user?.isAdmin ? "Admin" : "User"}</span>
             </div>
           </div>
           <div className="content">{children}</div>

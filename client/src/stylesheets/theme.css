@@ -1,9 +1,9 @@
 :root{
   --primary:#0F3460;
   --secondary:#ff5722;
-  --success:#4caf50;
+  --success:#91d694;
   --info:#00bcd4;
-  --warning:#ff9800;
+  --warning:#d5a255;
   --danger:#f44336;
   --light:#f1f1f1;
   --dark:#212121;
@@ -11,4 +11,24 @@
 
 .bg-primary{
   background-color:var(--primary) !important;
+}
+
+.bg-success{
+  background-color: var(--success) !important;
+}
+
+.bg-error{
+  background-color: var(--warning) !important;
+}
+
+.bg-x{
+background-color:#78C1F3;
+}
+
+.bg-y{
+background-color: #ede5e5;
+}
+
+.bg-white{
+  background-color: white;
 }
